@@ -37,6 +37,7 @@ body {
 
 .gallery {
   position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   height: 100vh;
@@ -60,11 +61,13 @@ body {
   will-change: transform;
 }
 
+/* Still laid out and still moving: the planes copy their position */
 .gallery__media {
   flex: none;
   width: var(--media-width);
   height: var(--media-height);
   overflow: hidden;
+  visibility: hidden;
 }
 
 .gallery__image {
@@ -84,4 +87,10 @@ body {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   opacity: 0.5;
+}
+
+.webgl {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
 }

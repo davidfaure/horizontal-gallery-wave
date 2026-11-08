@@ -1,9 +1,12 @@
 import gsap from "gsap";
-import { damp } from "./utils";
+import { damp, frameRatio } from "./utils";
 
 const WHEEL_FACTOR = 0.8;
 const DRAG_FACTOR = 0.8;
 const SCROLL_LERP = 0.1;
+const SPEED_LERP = 0.1;
+// Turns the gap between target and current, in pixels, into the wave's strength
+const SPEED_FACTOR = 0.0018;
 // deltaMode 1: Firefox with a mouse wheel counts in lines, not pixels
 const LINE_HEIGHT = 16;
 
@@ -11,6 +14,8 @@ export class HorizontalScroll {
   // In pixels, from 0 (first image) to -limit (last image)
   current = 0;
   target = 0;
+  // Read by the WebGL side: how far the gallery still has to go
+  speed = 0;
 
   private readonly track: HTMLElement;
   private limit = 0;
@@ -63,8 +68,11 @@ export class HorizontalScroll {
   };
 
   private update = () => {
+    const ratio = frameRatio();
+
     this.target = gsap.utils.clamp(-this.limit, 0, this.target);
-    this.current = damp(this.current, this.target, SCROLL_LERP);
+    this.current = damp(this.current, this.target, SCROLL_LERP, ratio);
+    this.speed = damp(this.speed, (this.target - this.current) * SPEED_FACTOR, SPEED_LERP, ratio);
 
     this.track.style.transform = `translate3d(${this.current}px, 0, 0)`;
   };
