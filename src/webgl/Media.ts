@@ -1,11 +1,13 @@
 import gsap from "gsap";
 import * as THREE from "three";
+import { isPhone } from "../device";
 import { frameRatio } from "../utils";
 import vertexShader from "./shaders/vertex.glsl?raw";
 import fragmentShader from "./shaders/fragment.glsl?raw";
 
-// The phase covered by the wave across the screen (halved in the shader): about one sine period
-const WAVE_FREQUENCY = Math.PI * Math.PI * 1.3;
+// The phase covered by the wave across the screen (halved in the shader):
+// about one sine period on a desktop, five eighths of one on a phone
+const WAVE_FREQUENCY = isPhone ? Math.PI * 2.5 : Math.PI * Math.PI * 1.3;
 // The ripple's clock, per frame at 60fps
 const TIME_STEP = 0.02;
 const FADE_DURATION = 0.5;

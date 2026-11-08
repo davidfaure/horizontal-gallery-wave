@@ -1,10 +1,12 @@
 import gsap from "gsap";
 import * as THREE from "three";
+import { isPhone } from "../device";
 import { Media } from "./Media";
 
 const FOV = 45;
 const CAMERA_Z = 5;
-const MAX_PIXEL_RATIO = 2;
+// Every pixel runs the fragment shader: on a phone, 1.5 instead of 2 draws 44% fewer
+const MAX_PIXEL_RATIO = isPhone ? 1.5 : 2;
 
 // All the WebGL side needs from the scroll, read on every frame
 export interface ScrollState {
@@ -23,6 +25,7 @@ export class GalleryGL {
   // The screen in pixels, and what the camera sees at z = 0 in scene units
   private readonly screen = new THREE.Vector2();
   private readonly viewport = new THREE.Vector2();
+  private visible = true;
 
   constructor(scroll: ScrollState, figures: HTMLElement[]) {
     this.scroll = scroll;
@@ -55,6 +58,11 @@ export class GalleryGL {
         }),
     );
 
+    // Off screen, nothing to draw: the canvas stops until it comes back into view
+    new IntersectionObserver(([entry]) => {
+      this.visible = entry?.isIntersecting ?? true;
+    }).observe(this.renderer.domElement);
+
     this.resize();
     window.addEventListener("resize", this.resize);
     gsap.ticker.add(this.render);
@@ -79,6 +87,8 @@ export class GalleryGL {
 
   // After the scroll's own update: both read the same frame
   private render = () => {
+    if (!this.visible) return;
+
     for (const media of this.medias) media.update(this.scroll.current, this.scroll.speed);
 
     this.renderer.render(this.scene, this.camera);
