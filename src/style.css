@@ -42,6 +42,13 @@ body {
   height: 100vh;
   overflow: hidden;
   user-select: none;
+  cursor: grab;
+  /* Horizontal drags are ours, vertical swipes still scroll the page */
+  touch-action: pan-y;
+}
+
+.gallery:active {
+  cursor: grabbing;
 }
 
 /* The first image starts in the middle of the screen, the last one ends there */
@@ -50,6 +57,7 @@ body {
   flex: none;
   gap: var(--gap);
   padding-inline: calc(50vw - var(--media-width) / 2);
+  will-change: transform;
 }
 
 .gallery__media {
