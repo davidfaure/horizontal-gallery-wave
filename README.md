@@ -24,6 +24,10 @@ git diff webgl mobile
 - The scroll speed is the gap between where the gallery is going and where it is. That gap drives the wave (`uStrength` in `vertex.glsl`).
 - The wave pushes the vertices towards the camera along a sine of their position on screen, so the bend travels across the images as they move.
 
+## Frame
+
+The title, branch and links around the demo live in `src/frame/` and aren't part of the effect. The text is in `src/frame/config.ts`, the branch comes from git when Vite starts, and the frame hides itself when the demo is embedded in an iframe.
+
 ## Getting started
 
 ```bash
